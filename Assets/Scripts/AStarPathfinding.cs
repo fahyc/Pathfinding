@@ -25,9 +25,6 @@ public class AStarPathfinding : MonoBehaviour {
             yPos = (int) Mathf.Floor(mapInfo.mapData.Count * Random.value);
         } while (!mapInfo.mapData[yPos][xPos].passable);
 
-        xPos = 15;
-        yPos = 5;
-
         //Set the player at the center of the square
         transform.position = new Vector3(mapInfo.mapData[yPos][xPos].xPos,
                                          mapInfo.mapData[yPos][xPos].yPos, -15);
@@ -42,8 +39,6 @@ public class AStarPathfinding : MonoBehaviour {
             target.yLoc = (int)Mathf.Floor(mapInfo.mapData.Count * Random.value);
         } while (!mapInfo.mapData[target.yLoc][target.xLoc].passable);
 
-        target.xLoc = 15;
-        target.yLoc = 19;
         //Place the destination on the map
         Instantiate(mapInfo.destination, new Vector3(mapInfo.mapData[target.yLoc][target.xLoc].xPos, mapInfo.mapData[target.yLoc][target.xLoc].yPos, -15f), Quaternion.identity);
 
@@ -62,7 +57,11 @@ public class AStarPathfinding : MonoBehaviour {
 
     void Update()
     {
-
+        if(Input.GetKeyDown("k") && pathToUse.Count > 0)
+        {
+            Debug.Log(pathToUse[0].xLoc + " " + pathToUse[0].yLoc);
+            pathToUse.RemoveAt(0);
+        }
     }
 
     //Check the four adjacent neighborsand add them to a temproary list

@@ -11,8 +11,12 @@ public class MapGeneration : MonoBehaviour {
     public GameObject treeTile;
     public GameObject floorTile;
     public GameObject passableTile;
+	public GameObject emptyTile;
     [HideInInspector]
     public List<List<Node>> mapData;
+
+	public bool spawnPassables = true;//true to spawn passableTiles, false otherwise.
+	public GameObject goTemplate;//this should be null unless you are going to spawn the tiles childed to a certain prefab.
 
     public class Node
     {
@@ -30,10 +34,20 @@ public class MapGeneration : MonoBehaviour {
 
     void Start()
     {
-        map = new GameObject();
+		if (goTemplate)
+		{
+			map = Instantiate(goTemplate);
+		}
+		else
+		{
+			map = new GameObject();
+		}
         mapData = new List<List<Node>>();
         Load();
-        genData();
+		if (spawnPassables)
+		{
+			genData();
+		}
     }
 
     private bool Load()
@@ -59,8 +73,11 @@ public class MapGeneration : MonoBehaviour {
                         else if (line1[xLoc] == 'T')
                         {
                             Instantiate(treeTile, new Vector3(xLoc, -yLoc, 0), Quaternion.identity, map.transform);
-                        }
-                        ++xLoc;
+						}else if(line1[xLoc] == '@' && emptyTile != null)
+						{
+							Instantiate(emptyTile, new Vector3(xLoc, -yLoc, 0), Quaternion.identity, map.transform);
+						}
+						++xLoc;
                     }
                 }
                     

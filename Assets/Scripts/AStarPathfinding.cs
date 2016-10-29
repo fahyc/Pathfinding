@@ -124,16 +124,16 @@ public class AStarPathfinding : MonoBehaviour {
 
     }
 
-    MapGeneration.Node FindPath(int xDest, int yDest)
+    public MapGeneration.Node FindPath(MapGeneration.Node start, MapGeneration.Node end)
     {
         List<MapGeneration.Node> open = new List<MapGeneration.Node>();
         List<MapGeneration.Node> closed = new List<MapGeneration.Node>();
-        open.Add(mapInfo.mapData[this.yPos][this.xPos]);
+        open.Add(start);
         while(open.Count > 0)
         {
             MapGeneration.Node current = open[0];
             open.RemoveAt(0);
-            if(current.xLoc == xDest && current.yLoc == yDest)
+            if(current == end)
             {
 				MapGeneration.Node next;// = current.parent;
 				MapGeneration.Node cur = current;
@@ -196,4 +196,80 @@ public class AStarPathfinding : MonoBehaviour {
         }
         return new MapGeneration.Node(this.xPos, this.yPos, true);
     }
+
+	MapGeneration.Node FindPath(int xDest,int yDest)
+	{
+		List<MapGeneration.Node> open = new List<MapGeneration.Node>();
+		List<MapGeneration.Node> closed = new List<MapGeneration.Node>();
+		open.Add(mapInfo.mapData[this.yPos][this.xPos]);
+		while (open.Count > 0)
+		{
+			MapGeneration.Node current = open[0];
+			open.RemoveAt(0);
+			if (current.xLoc == xDest && current.yLoc == yDest)
+			{
+				MapGeneration.Node next;// = current.parent;
+				MapGeneration.Node cur = current;
+				while (cur.parent != null)
+				{
+					next = cur.parent;
+					lineManager.DrawLine(cur.position.xy().append(-2), next.position.xy().append(-2), Color.blue);
+					cur = next;
+				}
+				print("returning.");
+				return current;
+			}
+			else
+			{
+				closed.Add(current);
+				if (current.parent != null)
+				{
+					// print(lineManager + " : " + current + " : " + current.parent);
+					lineManager.DrawLine(current.position.xy().append(-1), current.parent.position.xy().append(-1), Color.red);
+				}
+				foreach (MapGeneration.Node neighbor in tileBased ? findNeighbors(current) : findNeighborsTileless(current))
+				{
+
+					lineManager.DrawLine(current.position.xy().append(-.5f), neighbor.position.xy().append(-.5f), Color.yellow);
+					bool inClosed = closed.Contains(neighbor);
+					bool inOpen = open.Contains(neighbor);
+
+					if (inClosed && current.g + 1 < neighbor.g)
+					{
+						Debug.Log("Closed");
+						neighbor.g = current.g + 1;
+						neighbor.parent = current;
+
+					}
+					else if (inOpen && current.g + 1 < neighbor.g)
+					{
+						Debug.Log("open");
+						neighbor.g = current.g + 1;
+						neighbor.parent = current;
+					}
+					else if (!inOpen && !inClosed)
+					{
+						neighbor.h = useHeuristic(neighbor);
+						neighbor.g = neighbor.g + 1;
+						neighbor.parent = current;
+
+						int index = open.BinarySearch(neighbor);
+						if (index < 0)
+						{
+							open.Insert(~index, neighbor); //Add at the theoretical location
+						}
+						else
+						{
+							open.Insert(index, neighbor);
+						}
+
+					}
+				}
+			}
+		}
+		return new MapGeneration.Node(this.xPos, this.yPos, true);
+	}
+
 }
+
+

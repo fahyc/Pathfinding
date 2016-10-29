@@ -5,7 +5,6 @@ using System.Text;
 using System.IO;
 using System;
 using UnityEditor;
-
 public class MapGeneration : MonoBehaviour {
 
     private GameObject map;
@@ -19,12 +18,15 @@ public class MapGeneration : MonoBehaviour {
     [HideInInspector]
     public List<List<Node>> mapData;
 
+	[Serializable]
     public class Node : IComparable<Node>
     {
         public Node parent;
         //Location for character movement, is the center of the tile
         public float xPos;
         public float yPos;
+
+		public Vector3 position;
 
         //Location in the Graph for pathfinding
         public int xLoc;
@@ -33,11 +35,26 @@ public class MapGeneration : MonoBehaviour {
         public float h = 0; // Heuristic cost
         public bool passable;
 
+		public List<Node> neighbors;
+
+		public Node(Vector3 pos, bool p)
+		{
+			position = pos;
+			xPos = position.x;
+			yPos = position.y;
+			xLoc = (int)position.x;
+			yLoc = (int)position.y;
+			passable = p;
+			parent = null;
+		}
+
         public Node( int xL, int yL, bool p)
         {
-            xPos = xL + .5f;
+			xPos = xL + .5f;
             yPos = -yL - .5f;
-            xLoc = xL/2;
+
+			position = new Vector3(xPos, yPos, 0);
+			xLoc = xL/2;
             yLoc = yL/2;
             passable = p;
             parent = null;
@@ -102,8 +119,8 @@ public class MapGeneration : MonoBehaviour {
 
     //Generate the movement tiles
     private void GenerateData()
-    {            
-        string[] mapInfo = new StreamReader(Application.dataPath + "/" + mapName).ReadToEnd().Split('\n');
+    {
+		string[] mapInfo = new StreamReader(Application.dataPath + "/" + mapName).ReadToEnd().Split('\n');
         for (int y = 0; y < mapInfo.Length-1; y += 2)
         {
             mapData.Add(new List<Node>());

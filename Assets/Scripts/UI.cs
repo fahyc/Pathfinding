@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class UI : MonoBehaviour {
 
     public Button hB;
-
+    public Text hWS;
     public void Start()
     {
         if (SceneManager.GetActiveScene().name.Equals("AStar"))
@@ -75,5 +75,10 @@ public class UI : MonoBehaviour {
         {
             SceneManager.LoadScene("AStar");
         }
+    }
+
+    public void HeuristicWeight()
+    {
+        PlayerPrefs.SetFloat("hW", float.Parse(hWS.text));
     }
 }

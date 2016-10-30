@@ -32,32 +32,23 @@ public class AStarPathfinding : MonoBehaviour {
 			//Get the map data from the Map Generation Script
 			mapInfo = Camera.main.GetComponent<MapGeneration>();
 
-			//Random start location for the actor
-			do
-			{
-				xPos = (int)Mathf.Floor(mapInfo.mapData[0].Count * UnityEngine.Random.value);
-				yPos = (int)Mathf.Floor(mapInfo.mapData.Count * UnityEngine.Random.value);
-			} while (!mapInfo.mapData[yPos][xPos].passable);
+            xPos = PlayerPrefs.GetInt("playerX");
+            yPos = PlayerPrefs.GetInt("playerY");
 
 			//Set the player at the center of the square
 			transform.position = new Vector3(mapInfo.mapData[yPos][xPos].xPos,
 											 mapInfo.mapData[yPos][xPos].yPos, -15);
 
 			//Generate a node for the target
-			target = new MapGeneration.Node(0, 0, true);
+			target = new MapGeneration.Node(2*PlayerPrefs.GetInt("destX"), PlayerPrefs.GetInt("destY"), true);
 
-			//Random location for the target
-			do
-			{
-				target.xLoc = (int)Mathf.Floor(mapInfo.mapData[0].Count * UnityEngine.Random.value);
-				target.yLoc = (int)Mathf.Floor(mapInfo.mapData.Count * UnityEngine.Random.value);
-			} while (!mapInfo.mapData[target.yLoc][target.xLoc].passable);
 
 			//Place the destination on the map
 			Instantiate(mapInfo.destination, new Vector3(mapInfo.mapData[target.yLoc][target.xLoc].xPos, mapInfo.mapData[target.yLoc][target.xLoc].yPos, -15f), Quaternion.identity);
 
 			Camera.main.transform.parent = this.transform;
 			Camera.main.transform.localPosition = new Vector3(0, 0, -25);
+            Camera.main.transform.parent = null;
 
 			MapGeneration.Node destNode = FindPath(target.xLoc, target.yLoc);
 			pathToUse = new List<MapGeneration.Node>();

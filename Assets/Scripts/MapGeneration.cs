@@ -20,6 +20,8 @@ public class MapGeneration : MonoBehaviour {
     [HideInInspector]
     public List<List<Node>> mapData;
 
+    private float heuristicWeight = 1;
+
 	[Serializable]
 	public class Node : IComparable<Node>
 	{
@@ -44,7 +46,6 @@ public class MapGeneration : MonoBehaviour {
 		public Node(Vector3 pos, bool p)
 		{
 
-			//print("placing node");
 			position = pos;
 			xPos = position.x;
 			yPos = position.y;
@@ -57,7 +58,6 @@ public class MapGeneration : MonoBehaviour {
         public Node( int xL, int yL, bool p)
         {
 
-			//print("placing node 2");
 			xPos = xL + .5f;
             yPos = -yL - .5f;
 
@@ -72,9 +72,10 @@ public class MapGeneration : MonoBehaviour {
         {
             Node n1 = this;
             Node n2 = a;
-            if (n1.g + n1.h > n2.g + n2.h)
+            float hW = PlayerPrefs.GetFloat("hW");
+            if (n1.g + n1.h *hW > n2.g + n2.h*hW)
                 return 1;
-            if (n1.g + n1.h < n2.g + n2.h)
+            if (n1.g + n1.h*hW < n2.g + n2.h*hW)
                 return -1;
             else
                 return 0;
@@ -83,8 +84,14 @@ public class MapGeneration : MonoBehaviour {
 
     void Start()
     {
+        //PlayerPrefs.DeleteAll();
         if (!PlayerPrefs.HasKey("cH"))
         {
+            PlayerPrefs.SetInt("playerX", 64);
+            PlayerPrefs.SetInt("playerY", 70);
+            PlayerPrefs.SetInt("destX", 64);
+            PlayerPrefs.SetInt("destY", 71);
+            PlayerPrefs.SetFloat("hW", 1);
             PlayerPrefs.SetInt("cH", 0);
             PlayerPrefs.SetString("cM", "AStar/Maps/hrt201n.map");
             PlayerPrefs.Save();

@@ -20,9 +20,6 @@ public class AStarPathfinding : MonoBehaviour {
 
 	LineManager lineManager;
 
-
-
-
 	// Use this for initialization
 	void Start()
 	{
@@ -109,7 +106,7 @@ public class AStarPathfinding : MonoBehaviour {
         switch (PlayerPrefs.GetInt("cH"))
         {
             case 1:
-                return Mathf.Abs(current.xLoc - target.xPos) + Mathf.Abs(current.yLoc - target.yPos);
+                return Mathf.Abs(current.xPos - target.xPos) + Mathf.Abs(current.yPos - target.yPos);
             default:
                 return Vector2.Distance(new Vector2(current.xLoc, current.yLoc), new Vector2(target.xLoc, target.yLoc));
         }
@@ -207,7 +204,7 @@ public class AStarPathfinding : MonoBehaviour {
 			open.RemoveAt(0);
 			if (current.xLoc == xDest && current.yLoc == yDest)
 			{
-				MapGeneration.Node next;// = current.parent;
+				MapGeneration.Node next;
 				MapGeneration.Node cur = current;
 				while (cur.parent != null)
 				{
@@ -255,13 +252,13 @@ public class AStarPathfinding : MonoBehaviour {
 						int index = open.BinarySearch(neighbor);
 						if (index < 0)
 						{
+                            Debug.Log(index + " " + ~index);
 							open.Insert(~index, neighbor); //Add at the theoretical location
 						}
 						else
 						{
 							open.Insert(index, neighbor);
 						}
-
 					}
 				}
 			}

@@ -21,7 +21,7 @@ public class AStarPathfinding : MonoBehaviour {
 	LineManager lineManager;
 
 
-
+	public MapGeneration.Node[] nodeArray;
 
 	// Use this for initialization
 	void Start()
@@ -281,6 +281,11 @@ public class AStarPathfinding : MonoBehaviour {
 		while (open.Count > 0)
 		{
 			yield return new YieldInstruction();
+			nodeArray = new MapGeneration.Node[open.Keys.Count];
+			for(int i = 0; i < open.Keys.Count; i++)
+			{
+				nodeArray[i] = open.Keys[i];
+			}
 			//print("running pathfinding.");
 			MapGeneration.Node current = open.Keys[0];
 			open.Remove(current);
@@ -308,7 +313,7 @@ public class AStarPathfinding : MonoBehaviour {
 				}
 				foreach (MapGeneration.Node neighbor in tileBased ? findNeighbors(current) : findNeighborsTileless(current))
 				{
-
+					
 					lineManager.DrawLine(current.position.xy().append(-.5f), neighbor.position.xy().append(-.5f), Color.yellow);
 					bool inClosed = closed.Contains(neighbor);
 					bool inOpen = open.ContainsKey(neighbor);

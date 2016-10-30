@@ -1,15 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class CameraControl : MonoBehaviour {
 
-	// Use this for initialization
-	void Start() { 
-    }
-	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetKeyDown("1"))
         {
             Vector3 p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             float xVal = Mathf.Round(p.x);
@@ -21,13 +18,19 @@ public class CameraControl : MonoBehaviour {
             if(yVal % 2 == 1)
             {
                 yVal++;
+                
             }
-            Debug.Log("x " + xVal / 2 + " y " + yVal / -2); 
-            PlayerPrefs.SetInt("playerX", (int)xVal / 2);
-            PlayerPrefs.SetInt("playerY", (int)yVal / -2);
+            Debug.Log("Player x " + xVal / 2 + " y " + yVal / -2); 
+
+            if(Camera.main.GetComponent<MapGeneration>().mapData[(int)Mathf.Floor(yVal / -2)][(int)(xVal / 2)].passable)
+            {
+                PlayerPrefs.SetInt("playerX", (int)(xVal / 2));
+                PlayerPrefs.SetInt("playerY", (int)Mathf.Floor(yVal / -2));
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (Input.GetKeyDown("2"))
         {
             Vector3 p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             float xVal = Mathf.Round(p.x);
@@ -40,9 +43,13 @@ public class CameraControl : MonoBehaviour {
             {
                 yVal++;
             }
-            
-            PlayerPrefs.SetInt("destX", (int)xVal/2);
-            PlayerPrefs.SetInt("destY", (int)yVal / -2);
+            Debug.Log("Dest x " + xVal / 2 + " y " + yVal / -2);
+            if (Camera.main.GetComponent<MapGeneration>().mapData[(int)Mathf.Floor(yVal / -2)][(int)(xVal / 2)].passable)
+            {
+                PlayerPrefs.SetInt("destX", (int)(xVal / 2));
+                PlayerPrefs.SetInt("destY", (int)Mathf.Floor(yVal / -2));
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
         }
 
         if (Input.GetKey("q"))

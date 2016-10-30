@@ -40,7 +40,7 @@ public class AStarPathfinding : MonoBehaviour {
 											 mapInfo.mapData[yPos][xPos].yPos, -15);
 
 			//Generate a node for the target
-			target = new MapGeneration.Node(2*PlayerPrefs.GetInt("destX"), PlayerPrefs.GetInt("destY"), true);
+			target = new MapGeneration.Node(2*PlayerPrefs.GetInt("destX"), 2*PlayerPrefs.GetInt("destY"), true);
 
 
 			//Place the destination on the map

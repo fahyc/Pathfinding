@@ -106,7 +106,7 @@ public class AStarPathfinding : MonoBehaviour {
     //Determines which heuristic to use
     float useHeuristic(MapGeneration.Node current)
     {
-        switch (currentHeuristic)
+        switch (PlayerPrefs.GetInt("cH"))
         {
             case 1:
                 return Mathf.Abs(current.xLoc - target.xPos) + Mathf.Abs(current.yLoc - target.yPos);

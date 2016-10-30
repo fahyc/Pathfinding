@@ -11,7 +11,6 @@ public class AStarPathfinding : MonoBehaviour {
     MapGeneration mapInfo;
     int xPos;
     int yPos;
-    public int currentHeuristic;
 
 	public bool tileBased = false;
 
@@ -49,13 +48,6 @@ public class AStarPathfinding : MonoBehaviour {
 
 			MapGeneration.Node destNode = FindPath(target.xLoc, target.yLoc);
 			pathToUse = new List<MapGeneration.Node>();
-			print("setting path to use.");
-			while (destNode != null)
-			{
-				pathToUse.Add(destNode);
-				destNode = destNode.parent;
-			}
-			pathToUse.Reverse();
 		}
 		else
 		{
@@ -252,7 +244,6 @@ public class AStarPathfinding : MonoBehaviour {
 						int index = open.BinarySearch(neighbor);
 						if (index < 0)
 						{
-                            Debug.Log(index + " " + ~index);
 							open.Insert(~index, neighbor); //Add at the theoretical location
 						}
 						else
@@ -273,13 +264,13 @@ public class AStarPathfinding : MonoBehaviour {
 		target = end;
 		//print("going from start " + start.position + " to " + end.position);
 		List<MapGeneration.Node> closed = new List<MapGeneration.Node>();
-		SortedList<MapGeneration.Node,int> open = new SortedList<MapGeneration.Node, int>();
-		open.Add(start,0);
+		List<MapGeneration.Node> open = new List<MapGeneration.Node>();
+		open.Add(start);
 		while (open.Count > 0)
 		{
 			yield return new YieldInstruction();
 			//print("running pathfinding.");
-			MapGeneration.Node current = open.Keys[0];
+			MapGeneration.Node current = open[0];
 			open.Remove(current);
 			if (current == end)
 			{
@@ -308,7 +299,7 @@ public class AStarPathfinding : MonoBehaviour {
 
 					lineManager.DrawLine(current.position.xy().append(-.5f), neighbor.position.xy().append(-.5f), Color.yellow);
 					bool inClosed = closed.Contains(neighbor);
-					bool inOpen = open.ContainsKey(neighbor);
+					bool inOpen = open.Contains(neighbor);
 					float newG = Vector3.Distance(current.position, neighbor.position);
 
 					if (inClosed && current.g + newG < neighbor.g)
@@ -323,9 +314,17 @@ public class AStarPathfinding : MonoBehaviour {
 						Debug.Log("open");
 						neighbor.g = current.g + newG;
 						neighbor.parent = current;
-						open.Add(neighbor, 0);
-						//open.
-					}
+                        int index = open.BinarySearch(neighbor);
+                        if (index < 0)
+                        {
+                            open.Insert(~index, neighbor);
+                        }
+                        else
+                        {
+                            open.Insert(index, neighbor);
+                        }
+                        //open.
+                    }
 					else if (!inOpen && !inClosed)
 					{
 						//MapGeneration.Node temp = Array.Find(open.ToArray(), x => x == neighbor);
@@ -335,12 +334,20 @@ public class AStarPathfinding : MonoBehaviour {
 							Debug.Log("Error. this is already in the open list.");
 							temp.g = Mathf.Min(current.g + newG, temp.g);
 						} else {*/
-							neighbor.h = useHeuristic(neighbor);
-							neighbor.g = current.g + newG;
-							neighbor.parent = current;
-							open.Add(neighbor,0);
-					///	}
-					}
+						neighbor.h = useHeuristic(neighbor);
+						neighbor.g = current.g + newG;
+						neighbor.parent = current;
+                        int index = open.BinarySearch(neighbor);
+                        if (index < 0)
+                        {
+                            open.Insert(~index, neighbor);
+                        }
+                        else
+                        {
+                            open.Insert(index, neighbor);
+                        }
+                        ///	}
+                    }
 				}
 			}
 		}

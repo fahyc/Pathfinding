@@ -6,7 +6,7 @@ public class CameraControl : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetKeyDown("1"))
+        if (Input.GetKeyDown("z"))
         {
             Vector3 p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             float xVal = Mathf.Round(p.x);
@@ -30,7 +30,7 @@ public class CameraControl : MonoBehaviour {
             }
         }
 
-        if (Input.GetKeyDown("2"))
+        if (Input.GetKeyDown("x"))
         {
             Vector3 p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             float xVal = Mathf.Round(p.x);

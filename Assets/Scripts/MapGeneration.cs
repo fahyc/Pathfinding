@@ -20,8 +20,6 @@ public class MapGeneration : MonoBehaviour {
     [HideInInspector]
     public List<List<Node>> mapData;
 
-    private float heuristicWeight = 1;
-
 	[Serializable]
 	public class Node : IComparable<Node>
 	{

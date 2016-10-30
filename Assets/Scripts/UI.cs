@@ -42,10 +42,18 @@ public class UI : MonoBehaviour {
         {
             if(PlayerPrefs.GetString("cM").Equals("AStar/Maps/hrt201n.map"))
             {
+                PlayerPrefs.SetInt("playerX", 64);
+                PlayerPrefs.SetInt("playerY", 70);
+                PlayerPrefs.SetInt("destX", 64);
+                PlayerPrefs.SetInt("destY", 71);
                 PlayerPrefs.SetString("cM", "AStar/Maps/arena2.map");
             }
             else
             {
+                PlayerPrefs.SetInt("playerX", 64);
+                PlayerPrefs.SetInt("playerY", 70);
+                PlayerPrefs.SetInt("destX", 64);
+                PlayerPrefs.SetInt("destY", 71);
                 PlayerPrefs.SetString("cM", "AStar/Maps/hrt201n.map");
             }
             PlayerPrefs.Save();
@@ -80,5 +88,6 @@ public class UI : MonoBehaviour {
     public void HeuristicWeight()
     {
         PlayerPrefs.SetFloat("hW", float.Parse(hWS.text));
+        ReloadScene();
     }
 }

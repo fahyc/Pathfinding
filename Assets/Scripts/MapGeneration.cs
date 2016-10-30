@@ -5,6 +5,8 @@ using System.Text;
 using System.IO;
 using System;
 using UnityEditor;
+using UnityEngine.SceneManagement;
+
 public class MapGeneration : MonoBehaviour {
 
     private GameObject map;
@@ -81,6 +83,13 @@ public class MapGeneration : MonoBehaviour {
 
     void Start()
     {
+        if (!PlayerPrefs.HasKey("cH"))
+        {
+            PlayerPrefs.SetInt("cH", 0);
+            PlayerPrefs.SetString("cM", "AStar/Maps/hrt201n.map");
+            PlayerPrefs.Save();
+        }
+
         map = new GameObject();
         mapData = new List<List<Node>>();
         Load();
@@ -93,6 +102,10 @@ public class MapGeneration : MonoBehaviour {
         string line1;
         int xLoc;
         int yLoc = -1;
+        if(SceneManager.GetActiveScene().name.Equals("AStar"))
+        {
+            mapName = PlayerPrefs.GetString("cM");
+        }
         StreamReader mapReader = new StreamReader(Application.dataPath + "/" + mapName);
         using (mapReader)
         {

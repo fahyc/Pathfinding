@@ -284,14 +284,15 @@ public class AStarPathfinding : MonoBehaviour {
 		lineManager.Clear();
 		target = end;
 		//print("going from start " + start.position + " to " + end.position);
-		Queue<MapGeneration.Node> open = new Queue<MapGeneration.Node>();
 		List<MapGeneration.Node> closed = new List<MapGeneration.Node>();
-		open.Enqueue(start);
+		SortedList<MapGeneration.Node,int> open = new SortedList<MapGeneration.Node, int>();
+		open.Add(start,0);
 		while (open.Count > 0)
 		{
 			yield return new YieldInstruction();
 			//print("running pathfinding.");
-			MapGeneration.Node current = open.Dequeue();
+			MapGeneration.Node current = open.Keys[0];
+			open.Remove(current);
 			if (current == end)
 			{
 				MapGeneration.Node next;// = current.parent;
@@ -319,7 +320,7 @@ public class AStarPathfinding : MonoBehaviour {
 
 					lineManager.DrawLine(current.position.xy().append(-.5f), neighbor.position.xy().append(-.5f), Color.yellow);
 					bool inClosed = closed.Contains(neighbor);
-					bool inOpen = open.Contains(neighbor);
+					bool inOpen = open.ContainsKey(neighbor);
 					float newG = Vector3.Distance(current.position, neighbor.position);
 
 					if (inClosed && current.g + newG < neighbor.g)
@@ -330,24 +331,27 @@ public class AStarPathfinding : MonoBehaviour {
 					}
 					else if (inOpen && current.g + newG < neighbor.g)
 					{
+						open.Remove(neighbor);
 						Debug.Log("open");
 						neighbor.g = current.g + newG;
 						neighbor.parent = current;
+						open.Add(neighbor, 0);
+						//open.
 					}
 					else if (!inOpen && !inClosed)
 					{
-						MapGeneration.Node temp = Array.Find(open.ToArray(), x => x == neighbor);
+						//MapGeneration.Node temp = Array.Find(open.ToArray(), x => x == neighbor);
 						//int index = open.FindIndex(x => x == neighbor);
-						if (temp != null) 
+						/*if (temp != null) 
 						{
 							Debug.Log("Error. this is already in the open list.");
 							temp.g = Mathf.Min(current.g + newG, temp.g);
-						} else {
+						} else {*/
 							neighbor.h = useHeuristic(neighbor);
 							neighbor.g = current.g + newG;
 							neighbor.parent = current;
-							open.Enqueue(neighbor);
-						}
+							open.Add(neighbor,0);
+					///	}
 					}
 				}
 			}

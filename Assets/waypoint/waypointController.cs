@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
+using ExtensionMethods;
 
 [RequireComponent (typeof (AStarPathfinding))]
 public class waypointController : MonoBehaviour {
-	PlacableNode nodePrefab;
-	PlacedPath path;
+	public PlacableNode nodePrefab;
+//	PlacedPath path;
 
-	PlacableNode start;
-	PlacableNode end;
+	public PlacableNode start;
+	public PlacableNode end;
 
 	AStarPathfinding pathFinding;
 	// Use this for initialization
@@ -19,25 +20,36 @@ public class waypointController : MonoBehaviour {
 	void Update () {
 		if (Input.GetMouseButtonDown(1))
 		{
-			Destroy(end);
-			PlacableNode node = Instantiate(nodePrefab);
+			if (end)
+			{
+				Destroy(end.gameObject);
+			}
+			PlacableNode node = (PlacableNode)Instantiate(nodePrefab, Camera.main.ScreenToWorldPoint(Input.mousePosition).xy(),Quaternion.identity);
 			node.temp = true;
 			end = node;
-			if (start && end)
-			{
-				pathFinding.FindPath(start.node, end.node);
-			}
+
+			StartCoroutine("findPath");
 		}
 		if (Input.GetMouseButtonDown(0))
 		{
-			Destroy(start);
-			PlacableNode node = Instantiate(nodePrefab);
+			if (start)
+			{
+				Destroy(start.gameObject);
+			}
+			PlacableNode node = (PlacableNode)Instantiate(nodePrefab, Camera.main.ScreenToWorldPoint(Input.mousePosition).xy(), Quaternion.identity);
 			node.temp = true;
 			start = node;
-			if (start && end)
-			{
-				pathFinding.FindPath(start.node, end.node);
-			}
+			StartCoroutine("findPath");
+		}
+	}
+
+	IEnumerator findPath()
+	{
+		yield return new YieldInstruction();
+		if (start && end)
+		{
+			print("Start: " + start + " end: " + end);
+			pathFinding.FindPath(start.getNode(), end.getNode());
 		}
 	}
 }

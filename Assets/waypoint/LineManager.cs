@@ -27,7 +27,7 @@ public class LineManager : MonoBehaviour {
 	{
 		for(int i =0; i < lines.Count; i++)
 		{
-			Destroy(lines[i]);
+			Destroy(lines[i].gameObject);
 		}
 		lines.Clear();
 		positions.Clear();
@@ -36,6 +36,9 @@ public class LineManager : MonoBehaviour {
 
 	public void DrawLine(Vector3 start, Vector3 end, Color color)
 	{
+
+
+		print("placing line");
 		if (!isOn)
 		{
 			return;
@@ -56,7 +59,7 @@ public class LineManager : MonoBehaviour {
 			if(positions[i].start == start && positions[i].end == end)
 			{
 				positions.RemoveAt(i);
-				Destroy(lines[i]);
+				Destroy(lines[i].gameObject);
 				lines.RemoveAt(i);
 			}
 		}

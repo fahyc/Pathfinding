@@ -4,6 +4,16 @@ using System.Collections.Generic;
 
 public class PlacableNode : MonoBehaviour {
 	public MapGeneration.Node node;
+	public MapGeneration.Node getNode()
+	{
+		return node;
+	}
+	public void setNode( MapGeneration.Node newNode)
+	{
+		node = newNode;
+	}
+
+	//public PlacableNode[] nodesDemo;
 
 	public bool temp;
 
@@ -11,8 +21,9 @@ public class PlacableNode : MonoBehaviour {
 
 	void Awake()
 	{
+		//print("placing");
 		nodes.Add(this);
-		node = new MapGeneration.Node((int)transform.position.x, (int)transform.position.y, false);
+		node = new MapGeneration.Node(transform.position, false);
 		node.neighbors = new List<MapGeneration.Node>();
 	}
 	// Use this for initialization
@@ -29,6 +40,7 @@ public class PlacableNode : MonoBehaviour {
 				}
 			}
 		}
+		//nodesDemo = nodes.ToArray();
 	}
 
 	void OnDestroy()
@@ -37,6 +49,21 @@ public class PlacableNode : MonoBehaviour {
 		for(int i = 0; i < node.neighbors.Count; i++)
 		{
 			node.neighbors[i].neighbors.Remove(node);
+		}
+		for(int i = 0; i < nodes.Count; i++)
+		{
+			if(nodes[i] == this)
+			{
+				print("found self.");
+			}
+		}
+		nodes.Remove(this);
+		for (int i = 0; i < nodes.Count; i++)
+		{
+			if (nodes[i] == this)
+			{
+				print("Error! found self.");
+			}
 		}
 	}
 	

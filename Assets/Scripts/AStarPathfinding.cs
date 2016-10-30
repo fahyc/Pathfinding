@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 using ExtensionMethods;
+using System;
 
 [RequireComponent (typeof(LineManager))]
 public class AStarPathfinding : MonoBehaviour {
@@ -34,8 +35,8 @@ public class AStarPathfinding : MonoBehaviour {
 			//Random start location for the actor
 			do
 			{
-				xPos = (int)Mathf.Floor(mapInfo.mapData[0].Count * Random.value);
-				yPos = (int)Mathf.Floor(mapInfo.mapData.Count * Random.value);
+				xPos = (int)Mathf.Floor(mapInfo.mapData[0].Count * UnityEngine.Random.value);
+				yPos = (int)Mathf.Floor(mapInfo.mapData.Count * UnityEngine.Random.value);
 			} while (!mapInfo.mapData[yPos][xPos].passable);
 
 			//Set the player at the center of the square
@@ -48,8 +49,8 @@ public class AStarPathfinding : MonoBehaviour {
 			//Random location for the target
 			do
 			{
-				target.xLoc = (int)Mathf.Floor(mapInfo.mapData[0].Count * Random.value);
-				target.yLoc = (int)Mathf.Floor(mapInfo.mapData.Count * Random.value);
+				target.xLoc = (int)Mathf.Floor(mapInfo.mapData[0].Count * UnityEngine.Random.value);
+				target.yLoc = (int)Mathf.Floor(mapInfo.mapData.Count * UnityEngine.Random.value);
 			} while (!mapInfo.mapData[target.yLoc][target.xLoc].passable);
 
 			//Place the destination on the map
@@ -126,11 +127,18 @@ public class AStarPathfinding : MonoBehaviour {
 
     public MapGeneration.Node FindPath(MapGeneration.Node start, MapGeneration.Node end)
     {
+		StartCoroutine(pathFindCoRoutine(start,end));
+		return new MapGeneration.Node(0, 0, false);
+		/*
+		lineManager.Clear();
+		target = end;
+		//print("going from start " + start.position + " to " + end.position);
         List<MapGeneration.Node> open = new List<MapGeneration.Node>();
         List<MapGeneration.Node> closed = new List<MapGeneration.Node>();
         open.Add(start);
         while(open.Count > 0)
         {
+			//print("running pathfinding.");
             MapGeneration.Node current = open[0];
             open.RemoveAt(0);
             if(current == end)
@@ -143,7 +151,7 @@ public class AStarPathfinding : MonoBehaviour {
 					lineManager.DrawLine(cur.position.xy().append(-2), next.position.xy().append(-2), Color.blue);
 					cur = next;
 				}
-				print("returning.");
+				//print("returning.");
                 return current;
             }
             else
@@ -160,27 +168,27 @@ public class AStarPathfinding : MonoBehaviour {
 					lineManager.DrawLine(current.position.xy().append(-.5f), neighbor.position.xy().append(-.5f), Color.yellow);
 					bool inClosed = closed.Contains(neighbor);
                     bool inOpen = open.Contains(neighbor);
+					float newG = Mathf.Abs(Vector3.Distance(current.position, neighbor.position));
 
-                    if (inClosed && current.g + 1 < neighbor.g)
+					if (inClosed && current.g + newG < neighbor.g)
                     {
                         Debug.Log("Closed");
-                        neighbor.g = current.g+1; 
+                        neighbor.g = current.g + newG; 
                         neighbor.parent = current;
-
                     }
-                    else if (inOpen && current.g + 1 < neighbor.g)
+                    else if (inOpen && current.g + newG < neighbor.g)
                     {
                         Debug.Log("open");
-                        neighbor.g = current.g+1;
+                        neighbor.g = current.g + newG;
                         neighbor.parent = current;
                     }
                     else if(!inOpen && !inClosed)
                     {
                         neighbor.h = useHeuristic(neighbor);
-                        neighbor.g = neighbor.g + 1;
+                        neighbor.g = neighbor.g + newG;
                         neighbor.parent = current;
 						
-                        int index = open.BinarySearch(neighbor);
+                        int index = open.FindIndex(x => x==neighbor);
                         if(index < 0)
                         {
                             open.Insert(~index, neighbor); //Add at the theoretical location
@@ -194,7 +202,7 @@ public class AStarPathfinding : MonoBehaviour {
                 }
             }
         }
-        return new MapGeneration.Node(this.xPos, this.yPos, true);
+        return new MapGeneration.Node(this.xPos, this.yPos, true);*/
     }
 
 	MapGeneration.Node FindPath(int xDest,int yDest)
@@ -216,7 +224,7 @@ public class AStarPathfinding : MonoBehaviour {
 					lineManager.DrawLine(cur.position.xy().append(-2), next.position.xy().append(-2), Color.blue);
 					cur = next;
 				}
-				print("returning.");
+				//print("returning.");
 				return current;
 			}
 			else
@@ -268,6 +276,83 @@ public class AStarPathfinding : MonoBehaviour {
 			}
 		}
 		return new MapGeneration.Node(this.xPos, this.yPos, true);
+	}
+
+
+	IEnumerator pathFindCoRoutine(MapGeneration.Node start, MapGeneration.Node end)
+	{
+		lineManager.Clear();
+		target = end;
+		//print("going from start " + start.position + " to " + end.position);
+		Queue<MapGeneration.Node> open = new Queue<MapGeneration.Node>();
+		List<MapGeneration.Node> closed = new List<MapGeneration.Node>();
+		open.Enqueue(start);
+		while (open.Count > 0)
+		{
+			yield return new YieldInstruction();
+			//print("running pathfinding.");
+			MapGeneration.Node current = open.Dequeue();
+			if (current == end)
+			{
+				MapGeneration.Node next;// = current.parent;
+				MapGeneration.Node cur = current;
+				while (cur.parent != null)
+				{
+					next = cur.parent;
+					lineManager.DrawLine(cur.position.xy().append(-2), next.position.xy().append(-2), Color.blue);
+					cur = next;
+				}
+				break;
+				//print("returning.");
+				//return current;
+			}
+			else
+			{
+				closed.Add(current);
+				if (current.parent != null)
+				{
+					// print(lineManager + " : " + current + " : " + current.parent);
+					lineManager.DrawLine(current.position.xy().append(-1), current.parent.position.xy().append(-1), Color.red);
+				}
+				foreach (MapGeneration.Node neighbor in tileBased ? findNeighbors(current) : findNeighborsTileless(current))
+				{
+
+					lineManager.DrawLine(current.position.xy().append(-.5f), neighbor.position.xy().append(-.5f), Color.yellow);
+					bool inClosed = closed.Contains(neighbor);
+					bool inOpen = open.Contains(neighbor);
+					float newG = Vector3.Distance(current.position, neighbor.position);
+
+					if (inClosed && current.g + newG < neighbor.g)
+					{
+						Debug.Log("Closed");
+						neighbor.g = current.g + newG;
+						neighbor.parent = current;
+					}
+					else if (inOpen && current.g + newG < neighbor.g)
+					{
+						Debug.Log("open");
+						neighbor.g = current.g + newG;
+						neighbor.parent = current;
+					}
+					else if (!inOpen && !inClosed)
+					{
+						MapGeneration.Node temp = Array.Find(open.ToArray(), x => x == neighbor);
+						//int index = open.FindIndex(x => x == neighbor);
+						if (temp != null) 
+						{
+							Debug.Log("Error. this is already in the open list.");
+							temp.g = Mathf.Min(current.g + newG, temp.g);
+						} else {
+							neighbor.h = useHeuristic(neighbor);
+							neighbor.g = current.g + newG;
+							neighbor.parent = current;
+							open.Enqueue(neighbor);
+						}
+					}
+				}
+			}
+		}
+		//return new MapGeneration.Node(this.xPos, this.yPos, true);
 	}
 
 }

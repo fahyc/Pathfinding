@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+using System;
+
 namespace ExtensionMethods
 {
 	public static class MyExtensions

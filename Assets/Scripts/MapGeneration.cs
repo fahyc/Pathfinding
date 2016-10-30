@@ -19,26 +19,30 @@ public class MapGeneration : MonoBehaviour {
     public List<List<Node>> mapData;
 
 	[Serializable]
-    public class Node : IComparable<Node>
-    {
-        public Node parent;
-        //Location for character movement, is the center of the tile
-        public float xPos;
-        public float yPos;
+	public class Node : IComparable<Node>
+	{
+		[NonSerialized]
+		public Node parent;
+		//Location for character movement, is the center of the tile
+		public float xPos;
+		public float yPos;
 
 		public Vector3 position;
 
-        //Location in the Graph for pathfinding
-        public int xLoc;
-        public int yLoc;
-        public float g = 0; // Cost to this point
-        public float h = 0; // Heuristic cost
-        public bool passable;
+		//Location in the Graph for pathfinding
+		public int xLoc;
+		public int yLoc;
+		public float g = 0; // Cost to this point
+		public float h = 0; // Heuristic cost
+		public bool passable;
 
+		[NonSerialized]
 		public List<Node> neighbors;
 
 		public Node(Vector3 pos, bool p)
 		{
+
+			//print("placing node");
 			position = pos;
 			xPos = position.x;
 			yPos = position.y;
@@ -50,6 +54,8 @@ public class MapGeneration : MonoBehaviour {
 
         public Node( int xL, int yL, bool p)
         {
+
+			//print("placing node 2");
 			xPos = xL + .5f;
             yPos = -yL - .5f;
 

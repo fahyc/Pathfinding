@@ -155,9 +155,11 @@ public class MapGeneration : MonoBehaviour {
                     mapData[y / 2].Add(new Node(x, y, false));
                 }
                 else
-                {
-                    mapData[y / 2].Add(new Node(x, y, true));
-                    Instantiate(passableTile, new Vector3(x+.5f, -y - .5f, -1), Quaternion.identity, map.transform);
+				{
+					GameObject temp = (GameObject)Instantiate(passableTile, new Vector3(x + .5f, -y - .5f, -1), Quaternion.identity, map.transform);
+					MapGeneration.Node tnode =  new Node(x, y, true);
+					temp.GetComponent<ActualTile>().node = tnode;
+					mapData[y / 2].Add(tnode);
                 }
             }
         }

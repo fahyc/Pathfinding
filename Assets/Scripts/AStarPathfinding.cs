@@ -239,7 +239,7 @@ public class AStarPathfinding : MonoBehaviour {
 					else if (!inOpen && !inClosed)
 					{
 						neighbor.h = useHeuristic(neighbor);
-						neighbor.g = neighbor.g + 1;
+						neighbor.g = current.g + 1;
 						neighbor.parent = current;
 
 						int index = open.BinarySearch(neighbor);

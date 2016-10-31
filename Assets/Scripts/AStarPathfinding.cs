@@ -18,6 +18,7 @@ public class AStarPathfinding : MonoBehaviour {
     List<MapGeneration.Node> pathToUse;
 
 	LineManager lineManager;
+	public List<MapGeneration.Node> openList;
 
 	// Use this for initialization
 	void Start()
@@ -269,6 +270,7 @@ public class AStarPathfinding : MonoBehaviour {
 		while (open.Count > 0)
 		{
 			yield return new YieldInstruction();
+			openList = open;
 			//print("running pathfinding.");
 			MapGeneration.Node current = open[0];
 			open.Remove(current);
@@ -314,17 +316,9 @@ public class AStarPathfinding : MonoBehaviour {
 						Debug.Log("open");
 						neighbor.g = current.g + newG;
 						neighbor.parent = current;
-                        int index = open.BinarySearch(neighbor);
-                        if (index < 0)
-                        {
-                            open.Insert(~index, neighbor);
-                        }
-                        else
-                        {
-                            open.Insert(index, neighbor);
-                        }
-                        //open.
-                    }
+						sortedAdd(open, neighbor);
+						//open.
+					}
 					else if (!inOpen && !inClosed)
 					{
 						//MapGeneration.Node temp = Array.Find(open.ToArray(), x => x == neighbor);
@@ -337,21 +331,30 @@ public class AStarPathfinding : MonoBehaviour {
 						neighbor.h = useHeuristic(neighbor);
 						neighbor.g = current.g + newG;
 						neighbor.parent = current;
-                        int index = open.BinarySearch(neighbor);
-                        if (index < 0)
-                        {
-                            open.Insert(~index, neighbor);
-                        }
-                        else
-                        {
-                            open.Insert(index, neighbor);
-                        }
+						sortedAdd(open, neighbor);
                         ///	}
                     }
 				}
 			}
 		}
 		//return new MapGeneration.Node(this.xPos, this.yPos, true);
+	}
+
+	void sortedAdd(List<MapGeneration.Node> list, MapGeneration.Node node)
+	{
+		list.Sort();
+		int index = list.BinarySearch(node);
+		print(index);
+		if (index < 0)
+		{
+			list.Insert(~index, node);
+		}
+		else
+		{
+			list.Insert(index, node);
+		}
+
+		list.Sort();
 	}
 
 }

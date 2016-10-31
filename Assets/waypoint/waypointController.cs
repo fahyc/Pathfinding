@@ -14,11 +14,23 @@ public class waypointController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		pathFinding = GetComponent<AStarPathfinding>();
+		//PlayerPrefs.DeleteAll();
+		if (!PlayerPrefs.HasKey("cH"))
+		{
+			PlayerPrefs.SetInt("playerX", 64);
+			PlayerPrefs.SetInt("playerY", 70);
+			PlayerPrefs.SetInt("destX", 64);
+			PlayerPrefs.SetInt("destY", 71);
+			PlayerPrefs.SetFloat("hW", 1);
+			PlayerPrefs.SetInt("cH", 0);
+			PlayerPrefs.SetString("cM", "AStar/Maps/hrt201n.map");
+			PlayerPrefs.Save();
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetMouseButtonDown(1))
+		if (Input.GetKeyDown(KeyCode.X))
 		{
 			if (end)
 			{
@@ -30,7 +42,7 @@ public class waypointController : MonoBehaviour {
 
 			StartCoroutine("findPath");
 		}
-		if (Input.GetMouseButtonDown(0))
+		if (Input.GetKeyDown(KeyCode.Z))
 		{
 			if (start)
 			{

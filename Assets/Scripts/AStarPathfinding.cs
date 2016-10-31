@@ -225,14 +225,14 @@ public class AStarPathfinding : MonoBehaviour {
 
 					if (inClosed && current.g + 1 < neighbor.g)
 					{
-						Debug.Log("Closed");
+						//Debug.Log("Closed");
 						neighbor.g = current.g + 1;
 						neighbor.parent = current;
 
 					}
 					else if (inOpen && current.g + 1 < neighbor.g)
 					{
-						Debug.Log("open");
+						//Debug.Log("open");
 						neighbor.g = current.g + 1;
 						neighbor.parent = current;
 					}
@@ -306,14 +306,14 @@ public class AStarPathfinding : MonoBehaviour {
 
 					if (inClosed && current.g + newG < neighbor.g)
 					{
-						Debug.Log("Closed");
+						//Debug.Log("Closed");
 						neighbor.g = current.g + newG;
 						neighbor.parent = current;
 					}
 					else if (inOpen && current.g + newG < neighbor.g)
 					{
 						open.Remove(neighbor);
-						Debug.Log("open");
+						//Debug.Log("open");
 						neighbor.g = current.g + newG;
 						neighbor.parent = current;
 						sortedAdd(open, neighbor);
@@ -344,7 +344,7 @@ public class AStarPathfinding : MonoBehaviour {
 	{
 		list.Sort();
 		int index = list.BinarySearch(node);
-		print(index);
+		//print(index);
 		if (index < 0)
 		{
 			list.Insert(~index, node);

@@ -20,7 +20,7 @@ public class CameraControl : MonoBehaviour {
                 yVal++;
                 
             }
-            Debug.Log("Player x " + xVal / 2 + " y " + yVal / -2); 
+            //Debug.Log("Player x " + xVal / 2 + " y " + yVal / -2); 
 
             if(Camera.main.GetComponent<MapGeneration>().mapData[(int)Mathf.Floor(yVal / -2)][(int)(xVal / 2)].passable)
             {

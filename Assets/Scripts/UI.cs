@@ -58,8 +58,16 @@ public class UI : MonoBehaviour {
             }
             PlayerPrefs.Save();
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-        }
-    }
+		}
+		else if (SceneManager.GetActiveScene().name.Equals("hrt"))
+		{
+			SceneManager.LoadScene("arena");
+		}
+		else
+		{
+			SceneManager.LoadScene("hrt");
+		}
+	}
 
     public void ReloadScene()
     {

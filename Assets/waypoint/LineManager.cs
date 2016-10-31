@@ -38,7 +38,7 @@ public class LineManager : MonoBehaviour {
 	{
 
 
-		print("placing line");
+		//print("placing line");
 		if (!isOn)
 		{
 			return;

@@ -54,7 +54,7 @@ public class PlacableNode : MonoBehaviour {
 		{
 			if(nodes[i] == this)
 			{
-				print("found self.");
+				//print("found self.");
 			}
 		}
 		nodes.Remove(this);
